@@ -9,7 +9,7 @@ const columnsData = [
     title: 'Incomplete', 
     icon: <FaHourglassStart />, 
     colorClass: 'text-yellow-500', 
-    tasks: Array(25).fill(0).map((_, i) => ({
+    tasks: Array(15).fill(0).map((_, i) => ({
       taskId: `inc-${taskIdCounter++}`, 
       clientName: `Olivia Roberts`,
       assignedTo: `Alex Johnson`, 
@@ -24,7 +24,7 @@ const columnsData = [
     title: 'To Do', 
     icon: <FaClipboardList />,
     colorClass: 'text-blue-500', 
-    tasks: Array(25).fill(0).map((_, i) => ({
+    tasks: Array(15).fill(0).map((_, i) => ({
       taskId: `todo-${taskIdCounter++}`, 
       clientName: `Ethan Williams`, 
       assignedTo: `Jessica Lee`, 
@@ -39,7 +39,7 @@ const columnsData = [
     title: 'Doing', 
     icon: <FaCheckCircle />, 
     colorClass: 'text-green-500',
-    tasks: Array(25).fill(0).map((_, i) => ({
+    tasks: Array(15).fill(0).map((_, i) => ({
       taskId: `doing-${taskIdCounter++}`, 
       clientName: `Sophia Martinez`, 
       assignedTo: `Michael Smith`, 
@@ -54,7 +54,7 @@ const columnsData = [
     title: 'Under Review', 
     icon: <FaSearch />, 
     colorClass: 'text-gray-500',
-    tasks: Array(25).fill(0).map((_, i) => ({
+    tasks: Array(12).fill(0).map((_, i) => ({
       taskId: `ur-${taskIdCounter++}`, 
       clientName: `James Anderson`, 
       assignedTo: `Emily Davis`, 
@@ -69,7 +69,7 @@ const columnsData = [
     title: 'Completed', 
     icon: <FaCheck />, 
     colorClass: 'text-teal-500',
-    tasks: Array(25).fill(0).map((_, i) => ({
+    tasks: Array(8).fill(0).map((_, i) => ({
       taskId: `com-${taskIdCounter++}`, 
       clientName: `Ava Thompson`, 
       assignedTo: `David Brown`, 
@@ -84,7 +84,7 @@ const columnsData = [
     title: 'OverDue', 
     icon: <FaExclamationTriangle />, 
     colorClass: 'text-red-500',
-    tasks: Array(25).fill(0).map((_, i) => ({
+    tasks: Array(10).fill(0).map((_, i) => ({
       taskId: `od-${taskIdCounter++}`, 
       clientName: `Mason Wilson`, 
       assignedTo: `Sophia Wilson`, 

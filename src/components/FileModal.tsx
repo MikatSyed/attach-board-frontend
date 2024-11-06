@@ -53,6 +53,7 @@ const FileModal: React.FC<FileModalProps> = ({
         setTimeout(() => {
           toast.success('Attachment uploaded successfully');
         }, 300);
+        setSelectedFiles(null)
       } catch (error) {
         console.error('Error uploading files:', error);
         toast.error('Error uploading files. Please try again.');
