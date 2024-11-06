@@ -1,44 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { BsCalendarMinusFill, BsTerminalFill } from 'react-icons/bs';
 import { FaComment, FaCalendarAlt } from 'react-icons/fa';
 import { MdOutlineAttachFile } from 'react-icons/md';
-import Modal from 'react-modal';
 import FileModal from './FileModal';
 
 interface CardProps {
   taskName: string;
   images: string[];
   commentCount: number;
-  fileCount: number;
   dueDate: string;
   progress: string;
+  taskId: string;
 }
 
-const Card: React.FC<CardProps> = ({ taskName, images, commentCount, fileCount, dueDate, progress }) => {
+interface FileData {
+  originalName: string;
+  extension: string;
+  filePath: string;
+}
+
+const Card: React.FC<CardProps> = ({
+  taskName,
+  images,
+  commentCount,
+  dueDate,
+  progress,
+  taskId
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const [data, setData] = useState<FileData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const maxVisibleImages = 3;
   const additionalImagesCount = images.length - maxVisibleImages;
 
-  // Static file data for now
-  const staticFiles = [
-    { name: "document1", extension: "pdf" },
-    { name: "spreadsheet", extension: "xls" },
-    { name: "presentation", extension: "pptx" },
-    { name: "image", extension: "jpg" },
-  ];
+  const fetchFiles = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`http://localhost:8880/api/v1/attachment/${taskId}`);
+      const attachments = response.data.data.attachments.map((file: any) => ({
+        originalName: file.originalName,
+        extension: file.extension,
+        filePath: file.filePath || "",
+      }));
+      setData(attachments);
+    } catch (error) {
+      console.error('Error fetching files:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Open and close modal
+  useEffect(() => {
+    fetchFiles();
+  }, []);
+
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  // Handle file upload
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setSelectedFiles(e.target.files);
-    }
-  };
+  if (loading) {
+    return <div>Loading files...</div>;
+  }
 
   return (
     <div className="bg-white rounded-md shadow p-4 space-y-4 w-full">
@@ -46,11 +69,7 @@ const Card: React.FC<CardProps> = ({ taskName, images, commentCount, fileCount, 
       <div className="flex justify-between mb-4">
         <div className="flex space-x-2 items-center">
           <img src={images[0]} alt="User" className="w-8 h-8 rounded-full" />
-          <span className="font-semibold text-gray-800 text-sm">{taskName}</span>
-        </div>
-        <div className="flex space-x-2 items-center">
-          <img src={images[1]} alt="User" className="w-8 h-8 rounded-full" />
-          <span className="font-semibold text-gray-800 text-sm">{taskName}</span>
+          <span className="font-semibold text-gray-800 text-sm">{taskName}{taskId}</span>
         </div>
       </div>
 
@@ -71,18 +90,23 @@ const Card: React.FC<CardProps> = ({ taskName, images, commentCount, fileCount, 
         {images.slice(0, maxVisibleImages).map((imagePath, index) => (
           <img key={index} src={imagePath} alt={`User ${index}`} className="w-8 h-8 rounded-full" />
         ))}
-        
+
+        {additionalImagesCount > 0 && (
           <div className="flex items-center justify-center w-8 h-8 bg-gray-300 rounded-full">
             <span className="text-gray-600 text-sm p-3">+{additionalImagesCount}</span>
           </div>
-      
+        )}
+
         <div className="flex items-center space-x-1">
           <FaComment className="text-gray-400 text-sm" />
           <span className="text-sm text-gray-600">{commentCount}</span>
         </div>
         <div className="flex items-center space-x-1">
-          <MdOutlineAttachFile className="text-gray-400 text-sm font-bold cursor-pointer" onClick={openModal} />
-          <span className="text-sm text-gray-600">{fileCount}</span>
+          <MdOutlineAttachFile
+            className="text-gray-400 text-sm font-bold cursor-pointer"
+            onClick={openModal}
+          />
+          <span className="text-sm text-gray-600">{data.length}</span>
         </div>
         <div className="flex items-center justify-end space-x-1">
           <FaCalendarAlt className="text-gray-400 text-sm" />
@@ -93,9 +117,9 @@ const Card: React.FC<CardProps> = ({ taskName, images, commentCount, fileCount, 
       <FileModal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
-        staticFiles={staticFiles}
-        onFileUpload={handleFileUpload}
-        selectedFiles={selectedFiles}
+        taskId={taskId}
+        data={data} 
+        refetchData={fetchFiles}  // Pass refetch function to FileModal
       />
     </div>
   );
